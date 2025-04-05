@@ -1,0 +1,25 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - master  # Кожен раз, коли є зміни в гілці master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3  # Викачує код з репозиторію
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3  # Налаштовує SSH агент
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Використовує твій ключ з GitHub Secrets
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@3.71.86.119 "cd /home/ubuntu/serviceLviv && git pull && systemctl restart gunicorn && systemctl restart nginx"
+        # Підключається до сервера і виконує команди: git pull для отримання нових змін та перезапускає gunicorn і nginx
+ 
