@@ -43,9 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://admirable-dusk-cf2c72.netlify.app/"
-]
 
 CORS_ALLOW_METHODS = [
     "GET",
