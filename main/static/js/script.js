@@ -7,3 +7,4 @@ document.addEventListener('DOMContentLoaded', function () {
     }).addTo(map);
     map.zoomControl.remove();
 });
+
