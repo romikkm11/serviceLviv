@@ -16,7 +16,7 @@ class ServiceListView(generics.ListAPIView):
 
     def get_queryset(self):
         # queryset = Service.objects.all()
-        queryset = Service.objects.filter(service_general_name__isnull=False)
+        queryset = Service.objects.exclude(service_general_name__id=37)
         min_price = self.request.query_params.get('min_price')
         max_price = self.request.query_params.get('max_price')
         company_id = self.request.query_params.get('company_id')
