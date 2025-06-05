@@ -41,7 +41,7 @@ for company in companies:
         company_pos = response.json()['items'][0]['position']
 
         company_latitude = company_pos['lat']
-        company_longititude = company_pos['lng'] 
+        company_longititude = company_pos['lng']
    
     #     ##Оновлення запису в БД
         company, created = Company.objects.update_or_create(
@@ -51,8 +51,6 @@ for company in companies:
             )
     else:
         print(f"Помилка: не вдалося отримати дані, код статусу: {response.status_code}")
-    # print(company_name, company_latitude, company_longititude)
-    # # print(company_name, address_text)
 
 
 
