@@ -17,9 +17,9 @@ Including another URLconf
 from django.urls import path
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views import PriceListView
+from .views import ServiceListView
 
 urlpatterns = [
      path('', views.index),
-     path('prices/', PriceListView.as_view(), name='price-list'),
+     path('services/', ServiceListView.as_view(), name='service-list'),
 ]

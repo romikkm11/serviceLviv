@@ -16,21 +16,19 @@ class ServiceType(models.Model):
     def __str__(self):
         return self.name
     
-class Service(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Послуга')
+class ServiceGeneralName(models.Model):
+    name = models.CharField(max_length=200, verbose_name='Загальна назва послуги')
 
     def __str__(self):
         return self.name
     
-class Price(models.Model):
-    min_price = models.DecimalField(max_digits=10, decimal_places=2)
+class Service(models.Model):
+    name = models.CharField(max_length=200, verbose_name='Послуга')
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True)
     max_price = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    service_type = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null = True, blank = True)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null = True, blank = True)
+    service_general_name = models.ForeignKey(ServiceGeneralName, on_delete=models.SET_NULL, verbose_name='Узагальнена послуга', null = True, blank = True)
 
     def __str__(self):
-        if self.max_price:
-            return f"Компанія: {self.company.name}, Тип: {self.service_type.name}, Послуга: {self.service.name}, Від: {self.min_price}, До: {self.max_price}"
-        else:
-            return f"Компанія: {self.company.name}, Тип: {self.service_type.name}, Послуга: {self.service.name}, Від: {self.min_price}"
+        return self.name

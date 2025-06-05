@@ -17,7 +17,7 @@ def get_address_method_3(soup, company):
     return elements[0].text.strip().split('\n')[0]  
 
 def get_address_method_4(soup, company):
-    return soup.find(attrs=company['address_selector']).find(None).text.strip()
+    return soup.find_all(attrs=company['address_selector'])[1].find('p').text.strip().replace('2 SPACE : ', '')
 
 def get_address_method_5(soup, company):
     elements = soup.find_all('p')
@@ -72,12 +72,12 @@ def get_price_method_3(service_price_block):
         return min_prices_list, max_prices_list
 
 def get_price_method_4(service_price_block): 
-    service_price_elements = service_price_block.find_all(class_='tn-atom')
+    service_price_elements = service_price_block.find_all(class_='text-nowrap')
     min_prices_list = []
 
     for service_price_element in service_price_elements:
         price_element_text = service_price_element.text
-        if "UAH" in price_element_text:
+        if "грн" in price_element_text:
             price_element_text_without_space = price_element_text.replace(' ', '')
             price_element_range = re.findall(r'\d+', price_element_text_without_space)
             for min_or_max_price in price_element_range:
