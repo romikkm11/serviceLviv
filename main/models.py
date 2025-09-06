@@ -6,6 +6,8 @@ class Company(models.Model):
     name = models.CharField(max_length=200, verbose_name="Назва")
     latitude = models.FloatField(verbose_name = "Широта", null = True, blank = True)
     longititude = models.FloatField(verbose_name = "Довгота", null = True, blank = True)
+    logo_url = models.URLField(verbose_name = "URL логотипу", null = True, blank = True)
+    company_url = models.URLField(verbose_name = "URL компанії", null = True, blank = True)
 
     def __str__(self):
         return self.name
