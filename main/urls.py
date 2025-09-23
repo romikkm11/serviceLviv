@@ -17,9 +17,10 @@ Including another URLconf
 from django.urls import path
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views import ServiceListView
+from .views import ServiceListView, return_distances
 
 urlpatterns = [
      path('', views.index),
      path('services/', ServiceListView.as_view(), name='service-list'),
+     path('user-location/', return_distances, name = 'return-distances'),
 ]

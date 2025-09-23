@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Service
 
 class ServiceSerializer(serializers.ModelSerializer):
+    distance = serializers.SerializerMethodField()
     company_name = serializers.CharField(source="company.name", read_only=True)
     company_logo_url = serializers.CharField(source="company.logo_url", read_only=True)
     company_url = serializers.CharField(source="company.company_url", read_only=True)
@@ -11,3 +12,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
+
+    def get_distance(self, obj):
+        distances = self.context.get("distances", {}) 
+        return distances.get(obj.company_id)
