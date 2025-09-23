@@ -35,6 +35,17 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 INSTALLED_APPS = [
     'main',
     'corsheaders',
@@ -47,6 +58,26 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        os.getenv('LOCAL_FRONTEND_URL')
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        os.getenv('LOCAL_FRONTEND_URL'),
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        os.getenv('FRONTEND_URL'),
+        os.getenv('LOCAL_FRONTEND_URL')
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        os.getenv('FRONTEND_URL'),
+        os.getenv('LOCAL_FRONTEND_URL')
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -56,7 +87,9 @@ CORS_ALLOW_METHODS = [
 
 CORS_ALLOW_HEADERS = [
     "content-type",
+    'x-csrftoken'
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

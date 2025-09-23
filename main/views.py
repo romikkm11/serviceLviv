@@ -1,11 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import generics
 from .models import Service
 from .models import Company
 from .serializers import ServiceSerializer
+import json, requests, math
+from django.core.cache import cache
+from django.conf import settings
+
 
 # Create your views here.
+
 
 def index(request):
     return render(request, 'main/index.html')
@@ -39,3 +44,61 @@ class ServiceListView(generics.ListAPIView):
             
 
         return queryset
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        distances = cache.get(get_session_key(self.request), {})
+        context["distances"] = distances  
+        return context
+
+def get_session_key(request):
+    if settings.DEBUG:
+        return 'tkd06q5vplln05j7qpsi56efl3w49q7y'
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+    return session_key
+
+    
+def distance_calculate(lat1, lon1, lat2, lon2):
+    R = 6371
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = math.sin(delta_phi / 2) ** 2 + \
+        math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+
+
+def return_distances(request):
+    if request.method == 'POST':
+        distances = {}
+        data = json.loads(request.body)
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        user_url = data.get('user_url')
+        response = requests.get(user_url)
+        company_ids = set()
+        for i in response.json():
+            company_ids.add(i['company'])
+        company_coords = list(Company.objects.filter(id__in=company_ids).values('id', 'latitude', 'longititude'))
+        for i in company_coords:
+            dist = distance_calculate(latitude, longitude, i['latitude'], i['longititude'])
+            distances[i['id']] = dist
+        session_key = get_session_key(request)
+        cache.set(session_key, distances, timeout = 3600)
+        return JsonResponse({"status": "distances updated"})
+
+
+        
+
+ 
+
+
