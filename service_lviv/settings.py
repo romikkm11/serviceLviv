@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -62,17 +63,8 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS = [
         os.getenv('LOCAL_FRONTEND_URL')
     ]
-
-    CSRF_TRUSTED_ORIGINS = [
-        os.getenv('LOCAL_FRONTEND_URL'),
-    ]
 else:
     CORS_ALLOWED_ORIGINS = [
-        os.getenv('FRONTEND_URL'),
-        os.getenv('LOCAL_FRONTEND_URL')
-    ]
-
-    CSRF_TRUSTED_ORIGINS = [
         os.getenv('FRONTEND_URL'),
         os.getenv('LOCAL_FRONTEND_URL')
     ]
@@ -85,9 +77,8 @@ CORS_ALLOW_METHODS = [
     "OPTIONS"
 ]
 
-CORS_ALLOW_HEADERS = [
-    "content-type",
-    'x-csrftoken'
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Authorization",
 ]
 
 
