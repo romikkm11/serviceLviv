@@ -1,17 +1,13 @@
-import requests, sys, os, django, re
+import requests, os, django, re
 from bs4 import BeautifulSoup
 from companies_config import companies, headers
 from urllib.parse import urljoin
 from unidecode import unidecode
+from geocoder import geocode_address
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..')) ###Шлях до кореневої папки для парсера
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'service_lviv.settings')
 django.setup()
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'config')) ###Шлях до API геокодера
 
 from main.models import Company
-import config ###Імпорт файлу з API геокодера
 import boto3
 import io
 
@@ -32,23 +28,8 @@ for company in companies:
         except AttributeError:
             print(f"Не вдалося отримати адресу для {company['url']}")
 
-        ##Геокодер
-
-        url = 'https://geocode.search.hereapi.com/v1/geocode'
-
-        params = {
-            'q': address_text,
-            'apiKey' : config.API_KEY,
-            'limit': 1
-        }
-
-
-        response = requests.get(url, params=params)
-
-        company_pos = response.json()['items'][0]['position']
-
-        company_latitude = company_pos['lat']
-        company_longititude = company_pos['lng']
+        company_coords = geocode_address(address_text)
+        company_latitude, company_longititude = company_coords
 
         try:
             with requests.get(urljoin(company['url'],(soup.find('link', rel='icon')['href'])), stream=True, headers=headers) as response:

@@ -8,6 +8,7 @@ import json, requests, math, secrets
 from django.core.cache import cache
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from .geocoder.geocoder import geocode_address
 
 # Create your views here.
 
@@ -79,7 +80,6 @@ def distance_calculate(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     distance = R * c
-
     return distance
 
 
@@ -88,8 +88,15 @@ def return_distances(request):
     if request.method == 'POST':    
         distances = {}
         data = json.loads(request.body)
-        latitude = data.get('latitude')
-        longitude = data.get('longitude')
+        if 'latitude' in data and 'longitude' in data:
+            latitude = data.get('latitude')
+            longitude = data.get('longitude')
+        elif 'user_address' in data:
+            address_text = data.get('user_address')
+            try:
+                latitude, longitude = geocode_address(address_text)
+            except Exception as e:
+                return JsonResponse({'error': str(e)})
         user_url = data.get('user_url')
         user_token = data.get('user_token')
         if cache.get(user_token) is not None:
