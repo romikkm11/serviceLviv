@@ -97,10 +97,6 @@ def return_distances(request):
         elif 'user_address' in data:
             address_text = data.get('user_address')
             try:
-                1 / 0  # штучна помилка
-            except Exception:
-                logger.exception("Тест логування")
-            try:
                 latitude, longitude = geocode_address(address_text)
             except Exception as e:
                 logger.exception("Помилка у return_distances при геокодуванні адреси")
