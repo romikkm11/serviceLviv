@@ -9,8 +9,11 @@ from django.core.cache import cache
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .geocoder.geocoder import geocode_address
+import logging
 
 # Create your views here.
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     return render(request, 'main/index.html')
@@ -94,8 +97,13 @@ def return_distances(request):
         elif 'user_address' in data:
             address_text = data.get('user_address')
             try:
+                1 / 0  # штучна помилка
+            except Exception:
+                logger.exception("Тест логування")
+            try:
                 latitude, longitude = geocode_address(address_text)
             except Exception as e:
+                logger.exception("Помилка у return_distances при геокодуванні адреси")
                 return JsonResponse({'error': str(e)})
         user_url = data.get('user_url')
         user_token = data.get('user_token')

@@ -11,9 +11,7 @@ def geocoder_api_limit(func):
         if count <= 25000:
             result = func(*args, **kwargs)
             r.incr(geocoder_api_count_key)
-            print(count)
             return result
         else:
-            print(count)
             raise RuntimeError("Geocoder API limit exceeded")
     return wrapper
