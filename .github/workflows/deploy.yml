@@ -21,11 +21,9 @@ jobs:
           chmod 600 "$HOME/.ssh/id_rsa"
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> "$HOME/.ssh/known_hosts"
 
-
-
       - name: Deploy to Server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ${{ secrets.SERVER_PATH }}
             git fetch origin
             git reset --hard origin/master
@@ -33,6 +31,4 @@ jobs:
             python3 manage.py migrate
             sudo systemctl restart gunicorn
             sudo systemctl restart nginx
-
           EOF
-
