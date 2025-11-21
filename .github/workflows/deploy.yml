@@ -14,11 +14,13 @@ jobs:
 
       - name: Setup SSH
         run: |
+          export HOME="/home/runner"
           mkdir -p "$HOME/.ssh"
           chmod 700 "$HOME/.ssh"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/id_rsa"
           chmod 600 "$HOME/.ssh/id_rsa"
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> "$HOME/.ssh/known_hosts"
+
 
 
       - name: Deploy to Server
@@ -33,3 +35,4 @@ jobs:
             sudo systemctl restart nginx
 
           EOF
+
