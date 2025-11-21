@@ -14,21 +14,20 @@ jobs:
 
       - name: Setup SSH
         run: |
-          export HOME="/home/runner"
-          mkdir -p "$HOME/.ssh"
-          chmod 700 "$HOME/.ssh"
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/id_rsa"
-          chmod 600 "$HOME/.ssh/id_rsa"
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> "$HOME/.ssh/known_hosts"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ${{ secrets.SERVER_PATH }}
             git fetch origin
             git reset --hard origin/master
             pip3 install -r requirements.txt
-            python3 manage.py migrate
+            python3 manage.py migrate --noinput
             sudo systemctl restart gunicorn
             sudo systemctl restart nginx
           EOF
