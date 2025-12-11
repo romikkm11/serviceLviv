@@ -30,15 +30,3 @@ def geocoder_api_limit(func):
             logger.warning("Geocoder API limit перевищено: %d запитів", count)
             raise RuntimeError("Geocoder API limit exceeded")
     return wrapper
-
-# def geocoder_api_limit(func):
-#     def wrapper(*args, **kwargs):
-#         count = int(r.get(geocoder_api_count_key))
-#         if count <= 25000:
-#             result = func(*args, **kwargs)
-#             r.incr(geocoder_api_count_key)
-#             return result
-#         else:
-#             raise RuntimeError("Geocoder API limit exceeded")
-#     return wrapper
-
