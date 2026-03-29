@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'service_lviv.settings')
 django.setup()
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'config')) ###Шлях до API геокодера
 import config ###Імпорт файлу з API геокодера
-from .decorators import geocoder_api_limit
+from decorators import geocoder_api_limit
 import logging
 logger = logging.getLogger(__name__)
 headers = {
